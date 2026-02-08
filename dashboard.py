@@ -6,7 +6,7 @@ import gsheets_plotly as gsplotly
 
 from gsheets_api import authenticate_gsheets, retrieve_gsheets_values
 from dataframe_utils import pre_processing
-from constants import SPREADSHEET_ID, SPREADSHEET_RANGE, TOTAL_PNL, START_VALUE, TOTAL_PERCENT, LAST_EXIT_DATE
+from constants import SPREADSHEET_ID, SPREADSHEET_RANGE, TOTAL_PNL, MOEDA, TOTAL_PERCENT, LAST_EXIT_DATE
 
 # Carrega as credenciais dos Secrets
 creds = authenticate_gsheets(st.secrets["gcp_service_account"])
@@ -58,8 +58,8 @@ df = get_data_from_google_sheets()
 
 st.sidebar.header("Configuração de Filtros:")
 sb_coins = st.sidebar.multiselect("Criptos", 
-                                 options=df['COIN'].unique(),
-                                 default=df['COIN'].unique())
+                                 options=df[MOEDA].unique(),
+                                 default=df[MOEDA].unique())
 sb_category = st.sidebar.selectbox("Categorias", df['TIPO'].unique())
 
 
@@ -99,20 +99,20 @@ with tabs[2]:
 
     gsplotly.curva_patrimonio(df)
 
-    fig_tree = px.treemap(df, path=['COIN'], values=df[TOTAL_PNL].abs(),
+    fig_tree = px.treemap(df, path=[MOEDA], values=df[TOTAL_PNL].abs(),
                         color=TOTAL_PNL, 
                         color_continuous_scale='RdYlGn',
                         title="🌲 Alocação e Performance por Ativo")
-    st.plotly_chart(fig_tree, width=True)
+    st.plotly_chart(fig_tree, use_container_width=True)
 
 with tabs[3]:
 
     # --- CÁLCULOS EXISTENTES (Mantidos conforme seu código) ---
-    moeda_mais_frequente = df['COIN'].mode()[0]
-    total_frequencia = df['COIN'].value_counts().iloc[0]
+    moeda_mais_frequente = df[MOEDA].mode()[0]
+    total_frequencia = df[MOEDA].value_counts().iloc[0]
     trade_max = df.loc[df[TOTAL_PNL].idxmax()]
     trade_min = df.loc[df[TOTAL_PNL].idxmin()]
-    ranking_moedas = df.groupby('COIN')[TOTAL_PNL].sum().sort_values(ascending=False)
+    ranking_moedas = df.groupby(MOEDA)[TOTAL_PNL].sum().sort_values(ascending=False)
 
     # --- NOVOS CÁLCULOS ---
     top_roi_perc = df.loc[df[TOTAL_PERCENT].idxmax()]
@@ -130,8 +130,8 @@ with tabs[3]:
     with st.container():
         c1, c2, c3 = st.columns(3)
         c1.metric("🏆 Moeda Favorita", moeda_mais_frequente, f"{total_frequencia} trades")
-        c2.metric("🚀 Maior Tacada ($)", trade_max['COIN'], f"$ {trade_max[TOTAL_PNL]:,.2f}")
-        c3.metric("📉 Pior Pesadelo ($)", trade_min['COIN'], f"-$ {-1*trade_min[TOTAL_PNL]:,.2f}", delta_color='normal')
+        c2.metric("🚀 Maior Tacada ($)", trade_max[MOEDA], f"$ {trade_max[TOTAL_PNL]:,.2f}")
+        c3.metric("📉 Pior Pesadelo ($)", trade_min[MOEDA], f"-$ {-1*trade_min[TOTAL_PNL]:,.2f}", delta_color='normal')
 
     st.divider()
 
@@ -139,15 +139,15 @@ with tabs[3]:
     col_p1, col_p2, col_p3 = st.columns(3)
     with col_p1:
         st.write("**🔥 Melhor ROI %**")
-        st.write(f"{top_roi_perc['COIN']} ({top_roi_perc[TOTAL_PERCENT]:.2f}%)")
+        st.write(f"{top_roi_perc[MOEDA]} ({top_roi_perc[TOTAL_PERCENT]:.2f}%)")
         st.caption(f"Valor: $ {top_roi_perc[TOTAL_PNL]:,.2f}") # Adicionado valor ganho
     with col_p2:
         st.write("**🧊 Pior ROI %**")
-        st.write(f"{pior_roi_perc['COIN']} ({pior_roi_perc[TOTAL_PERCENT]:.2f}%)")
+        st.write(f"{pior_roi_perc[MOEDA]} ({pior_roi_perc[TOTAL_PERCENT]:.2f}%)")
         st.caption(f"Valor: $ {pior_roi_perc[TOTAL_PNL]:,.2f}") # Adicionado valor perdido
     with col_p3:
         st.write("**⏳ Trade mais Longo**")
-        st.write(f"{trade_mais_longo['COIN']}")
+        st.write(f"{trade_mais_longo[MOEDA]}")
         st.caption(f"Duração: {trade_mais_longo['DURATION']}")
 
     st.divider()
@@ -159,20 +159,20 @@ with tabs[3]:
     if not df_long.empty:
         # Best LONG
         row_l_max = df_long.loc[df_long[TOTAL_PNL].idxmax()]
-        l1.info(f"**Best LONG:** {row_l_max['COIN']} \n\n $ {row_l_max[TOTAL_PNL]:,.2f} | {row_l_max[TOTAL_PERCENT]:.2f}%")
+        l1.info(f"**Best LONG:** {row_l_max[MOEDA]} \n\n $ {row_l_max[TOTAL_PNL]:,.2f} | {row_l_max[TOTAL_PERCENT]:.2f}%")
         
         # Worst LONG
         row_l_min = df_long.loc[df_long[TOTAL_PNL].idxmin()]
-        l2.warning(f"**Worst LONG:** {row_l_min['COIN']} \n\n $ {row_l_min[TOTAL_PNL]:,.2f} | {row_l_min[TOTAL_PERCENT]:.2f}%")
+        l2.warning(f"**Worst LONG:** {row_l_min[MOEDA]} \n\n $ {row_l_min[TOTAL_PNL]:,.2f} | {row_l_min[TOTAL_PERCENT]:.2f}%")
     
     if not df_short.empty:
         # Best SHORT
         row_s_max = df_short.loc[df_short[TOTAL_PNL].idxmax()]
-        s1.info(f"**Best SHORT:** {row_s_max['COIN']} \n\n $ {row_s_max[TOTAL_PNL]:,.2f} | {row_s_max[TOTAL_PERCENT]:.2f}%")
+        s1.info(f"**Best SHORT:** {row_s_max[MOEDA]} \n\n $ {row_s_max[TOTAL_PNL]:,.2f} | {row_s_max[TOTAL_PERCENT]:.2f}%")
         
         # Worst SHORT
         row_s_min = df_short.loc[df_short[TOTAL_PNL].idxmin()]
-        s2.warning(f"**Worst SHORT:** {row_s_min['COIN']} \n\n $ {row_s_min[TOTAL_PNL]:,.2f} | {row_s_min[TOTAL_PERCENT]:.2f}%")
+        s2.warning(f"**Worst SHORT:** {row_s_min[MOEDA]} \n\n $ {row_s_min[TOTAL_PNL]:,.2f} | {row_s_min[TOTAL_PERCENT]:.2f}%")
 
     # Ranking Acumulado
     st.divider()

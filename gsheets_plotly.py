@@ -100,7 +100,7 @@ def histograma(df: pd.DataFrame):
     # Adiciona linha vertical no zero para destacar o divisor
     fig_hist.add_vline(x=0, line_dash="solid", line_color="white", line_width=1)
 
-    st.plotly_chart(fig_hist, width=True)
+    st.plotly_chart(fig_hist, use_container_width=True)
 
 ## GRAFICO: PERFORMANCE DIARIA
 ##
@@ -137,7 +137,7 @@ def performance_diaria(df):
     )
 
     # 5. Mostrar no Streamlit
-    st.plotly_chart(fig_daily, width=True)
+    st.plotly_chart(fig_daily, use_container_width=True)
 
 ## GRAFICO: CURVA PATRIMONIO
 ##
@@ -194,7 +194,7 @@ def curva_patrimonio(df: pd.DataFrame):
         annotation_position="bottom right"
     )
 
-    st.plotly_chart(fig_linha, width=True)
+    st.plotly_chart(fig_linha, use_container_width=True)
 
 ##
 ##  HEADER
@@ -249,7 +249,7 @@ def charts_header_1(df, hcol):
     fig.update_yaxes(showticklabels=False, title=None)
     fig.update_layout(showlegend=False, margin=dict(t=100, b=100, pad=100))
     fig.update_traces(width=.3, textfont_size=20)
-    hcol.plotly_chart(fig, width=True, showlegend="false")
+    hcol.plotly_chart(fig, use_container_width=True, showlegend="false")
 
 
 
