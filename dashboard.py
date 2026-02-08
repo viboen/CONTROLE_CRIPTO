@@ -55,8 +55,6 @@ st.set_page_config(layout='wide',
 
 df = get_data_from_google_sheets()
 
-df.to_csv('CRIPTO TRADER.csv')
-
 st.sidebar.header("Configuração de Filtros:")
 sb_coins = st.sidebar.multiselect("Criptos", 
                                  options=df['COIN'].unique(),

@@ -67,8 +67,6 @@ def pre_processing(df: pd.DataFrame):
 
     df = df.sort_values(['DATAHORA'])
 
-    df.to_csv('CONTROLE_CRIIPTO.csv')
-
     df = df[['DATAHORA','COIN','TIPO','STATUS','BUY AVG','BUY QNT','BUY CAPITAL',
              'P1 PNL','P1 PNL %',
              'P2 PNL','P2 PNL %',
