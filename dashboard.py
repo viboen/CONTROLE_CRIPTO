@@ -4,11 +4,12 @@ import plotly.graph_objects as go
 import plotly.express as px
 import gsheets_plotly as gsplotly
 
-from gsheets_api import authenticate_user, retrieve_gsheets_values
+from gsheets_api import authenticate_gsheets, retrieve_gsheets_values
 from dataframe_utils import pre_processing
 from constants import SPREADSHEET_ID, SPREADSHEET_RANGE, TOTAL_PNL, START_VALUE, TOTAL_PERCENT, LAST_EXIT_DATE
 
-creds = authenticate_user()
+# Carrega as credenciais dos Secrets
+creds = authenticate_gsheets(st.secrets["gcp_service_account"])
 
 def check_password():
     """Retorna True se o usuário inseriu a senha correta."""
