@@ -63,8 +63,8 @@ sb_coins = st.sidebar.multiselect("Criptos",
 sb_category = st.sidebar.selectbox("Categorias", df['TIPO'].unique())
 
 
-# Main page
-st.title(":green_heart: Controle Cripto 💜")
+
+
 st.markdown("##")
 
 
@@ -103,7 +103,7 @@ with tabs[2]:
                         color=TOTAL_PNL, 
                         color_continuous_scale='RdYlGn',
                         title="🌲 Alocação e Performance por Ativo")
-    st.plotly_chart(fig_tree, use_container_width=True)
+    st.plotly_chart(fig_tree, width=True)
 
 with tabs[3]:
 
@@ -127,10 +127,11 @@ with tabs[3]:
     st.subheader("💡 Insights e Curiosidades")
 
     # LINHA 1: Resumo Financeiro
-    c1, c2, c3 = st.columns(3)
-    c1.metric("🏆 Moeda Favorita", moeda_mais_frequente, f"{total_frequencia} trades")
-    c2.metric("🚀 Maior Tacada ($)", trade_max['COIN'], f"$ {trade_max[TOTAL_PNL]:,.2f}")
-    c3.metric("📉 Pior Pesadelo ($)", trade_min['COIN'], f"-$ {-1*trade_min[TOTAL_PNL]:,.2f}", delta_color='normal')
+    with st.container():
+        c1, c2, c3 = st.columns(3)
+        c1.metric("🏆 Moeda Favorita", moeda_mais_frequente, f"{total_frequencia} trades")
+        c2.metric("🚀 Maior Tacada ($)", trade_max['COIN'], f"$ {trade_max[TOTAL_PNL]:,.2f}")
+        c3.metric("📉 Pior Pesadelo ($)", trade_min['COIN'], f"-$ {-1*trade_min[TOTAL_PNL]:,.2f}", delta_color='normal')
 
     st.divider()
 
